@@ -4,11 +4,11 @@ version: 1.0
 object:
   attributes:
     display_name: 
-    name: ServiceTemplateProvisionRequest_Created
+    name: ServiceTemplateProvisionRequest_Starting
     inherits: 
     description: 
   fields:
   - rel5:
-      value: /Service/Provisioning/Profile/${/#miq_request.resource.ci_type}/${/#user.normalized_ldap_group}#get_auto_approval_state_machine
+      value: /Service/Provisioning/Profile/${/#miq_request.resource.ci_type}/${/#user.normalized_ldap_group}#get_quota_state_machine
   - rel6:
       value: /Service/Provisioning/StateMachines/${/#state_machine}/Default
