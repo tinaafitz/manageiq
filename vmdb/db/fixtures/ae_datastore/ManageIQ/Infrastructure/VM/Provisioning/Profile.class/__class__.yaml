@@ -178,7 +178,7 @@ object:
       datatype: string
       priority: 9
       owner: 
-      default_value: VMProvision_${/#miq_provision.target_type}
+      default_value: Provision_${/#miq_provision.target_type}
       substitute: true
       message: get_state_machine
       visibility: 

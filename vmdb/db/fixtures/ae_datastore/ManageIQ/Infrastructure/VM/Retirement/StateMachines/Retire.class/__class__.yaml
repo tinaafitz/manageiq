@@ -5,7 +5,7 @@ object:
   attributes:
     description: VMRetirement
     display_name: 
-    name: VMRetirement
+    name: Retire
     type: 
     inherits: 
     visibility: 

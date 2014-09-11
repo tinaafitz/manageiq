@@ -78,7 +78,7 @@ object:
       datatype: string
       priority: 4
       owner: 
-      default_value: VMMigrate
+      default_value: Migrate
       substitute: true
       message: get_state_machine
       visibility: 

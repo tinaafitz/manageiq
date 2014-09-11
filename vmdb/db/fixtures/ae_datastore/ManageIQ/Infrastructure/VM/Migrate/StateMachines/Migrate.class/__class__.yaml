@@ -5,7 +5,7 @@ object:
   attributes:
     description: State Machines
     display_name: 
-    name: VMMigrate
+    name: Migrate
     type: 
     inherits: 
     visibility: 

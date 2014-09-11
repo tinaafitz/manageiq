@@ -5,7 +5,7 @@ object:
   attributes:
     description: Service Provision State Machine
     display_name: 
-    name: ServiceProvision_Template
+    name: Provision
     type: 
     inherits: 
     visibility: 

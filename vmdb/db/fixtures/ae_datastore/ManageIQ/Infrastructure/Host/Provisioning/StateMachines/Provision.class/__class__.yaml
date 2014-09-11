@@ -5,7 +5,7 @@ object:
   attributes:
     description: Factory State Machines
     display_name: 
-    name: HostProvision
+    name: Provision
     type: 
     inherits: 
     visibility: 
