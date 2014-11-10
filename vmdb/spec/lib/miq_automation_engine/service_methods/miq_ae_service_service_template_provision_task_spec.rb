@@ -22,6 +22,13 @@ module MiqAeServiceServiceTemplateProvisionTaskSpec
       invoke_ae.root(@ae_result_key).should be_true
     end
 
+    it "#user_message" do
+      method = "$evm.root['#{@ae_result_key}'] = $evm.root['service_template_provision_task'].user_message = 'fred' "
+      @ae_method.update_attributes(:data => method)
+      invoke_ae.root(@ae_result_key).should be_true
+      expect(@service_template_provision_task.reload.options[:user_message]).to eq("fred")
+    end
+
     context "#status" do
       it "when state is provisioned" do
         @service_template_provision_task.update_attributes(:state => "provisioned")

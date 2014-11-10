@@ -24,5 +24,13 @@ module MiqAeServiceServiceTemplateProvisionRequestSpec
       MiqRequest.any_instance.should_receive(:approve).with(approver, reason).once
       invoke_ae.root(@ae_result_key).should  be_true
     end
+
+    it "#user_message" do
+      method = "$evm.root['#{@ae_result_key}'] = $evm.root['service_template_provision_request'].user_message = 'fred' "
+      @ae_method.update_attributes(:data => method)
+      invoke_ae.root(@ae_result_key).should be_true
+      expect(@service_template_provision_request.reload.options[:user_message]).to eq("fred")
+    end
+
   end
 end
