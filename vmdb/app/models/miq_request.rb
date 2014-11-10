@@ -382,6 +382,7 @@ class MiqRequest < ActiveRecord::Base
       msg = child.message unless child.nil?
     end
 
+    msg = self.get_option(:user_message) || msg
     self.update_attributes(:request_state=>req_state, :status=>req_status, :message=>msg)
   end
 

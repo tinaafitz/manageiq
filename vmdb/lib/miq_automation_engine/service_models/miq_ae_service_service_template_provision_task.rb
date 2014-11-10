@@ -22,6 +22,10 @@ module MiqAeMethodService
       end
     end
 
+    def user_message=(msg)
+      ar_method { object_send(:update_attribute, :options, {:user_message => msg}) }
+    end
+
     def status
       ar_method do
         if ['finished', 'provisioned'].include?(@object.state)

@@ -78,6 +78,7 @@ class MiqRequestTask < ActiveRecord::Base
       msg = child.message unless child.nil?
     end
 
+    msg = self.get_option(:user_message) || msg
     update_and_notify_parent(:state => req_state, :status => req_status, :message => msg)
   end
 
