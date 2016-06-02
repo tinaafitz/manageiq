@@ -80,13 +80,14 @@ def check_quota_results
   unless @max_exceeded.empty?
     max_message = message_text(nil, "Request exceeds maximum allowed for the following: ", @max_exceeded)
     message = set_exceeded_results(message, max_message, :quota_max_exceeded, "error")
+    @miq_request.set_message(message[0..250])
     return
   end
   unless @warn_exceeded.empty?
     warn_message = message_text('warn_', "Request exceeds warning limits for the following: ", @warn_exceeded)
     message = set_exceeded_results(message, warn_message, :quota_warn_exceeded, "ok")
+    @miq_request.set_message(message[0..250])
   end
-  @miq_request.set_message(message[0..250])
 end
 
 def set_exceeded_results(request_message, new_message, request_option, ae_result_text)
