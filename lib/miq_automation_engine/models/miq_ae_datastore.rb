@@ -3,6 +3,7 @@ module MiqAeDatastore
   XML_VERSION_MIN_SUPPORTED = "1.0"
   MANAGEIQ_DOMAIN = "ManageIQ"
   MANAGEIQ_PRIORITY = 0
+  SYSTEM_PRIORITY = 1
   DATASTORE_DIRECTORY = Rails.root.join('db/fixtures/ae_datastore')
   GIT_REPO_DIRECTORY = Rails.root.join('data/git_repos')
   DEFAULT_OBJECT_NAMESPACE = "$"
