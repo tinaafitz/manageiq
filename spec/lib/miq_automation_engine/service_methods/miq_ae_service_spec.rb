@@ -46,6 +46,85 @@ module MiqAeServiceSpec
       expect(result).to be_falsey
     end
 
+    context "$evm.create_notification" do
+      before { NotificationType.seed }
+
+      before(:each) do
+        @vm = FactoryGirl.create(:vm, :tenant => @root_tenant)
+      end
+
+      let(:ws) do
+        MiqAeEngine.instantiate("/EVM/AUTOMATE/test1?Vm::vm=#{@vm.id}", @owner)
+      end
+
+      def type_method_script
+        "vm = $evm.root['vm']
+        $evm.root['#{@ae_result_key}'] = $evm.create_notification(:type => :vm_powered_off, :subject => vm, :message => 'this is a test')"
+      end
+
+      def invalid_type_method_script
+        "vm = $evm.root['vm']
+        $evm.root['#{@ae_result_key}'] =  = $evm.create_notification(:type => :invalid_type, :subject => vm)"
+      end
+
+      def invalid_subject_method_script
+        "$evm.root['#{@ae_result_key}'] =  = $evm.create_notification(:type => :vm_powered_off, :subject => nil)"
+      end
+
+      it "existing notification type, valid subject" do
+        @ae_method.update_attributes(:data => type_method_script)
+        notification = ws.root(@ae_result_key)
+        expect(notification.options[:message]).to eql("this is a test")
+        expect(notification).to have_attributes(
+          :notification_type_id => NotificationType.find_by_name(:vm_powered_off).id,
+          :subject_id    => @vm.id
+        )
+      end
+
+      it "invalid notification type " do
+        @ae_method.update_attributes(:data => invalid_type_method_script)
+        expect { ws.root }.to raise_error(MiqAeException::UnknownMethodRc)
+      end
+
+      it "invalid subject " do
+        @ae_method.update_attributes(:data => invalid_subject_method_script)
+        expect { ws.root }.to raise_error(MiqAeException::UnknownMethodRc)
+      end
+
+      it "default type of automate_user_info" do
+        method = "$evm.root['#{@ae_result_key}'] = $evm.create_notification(:message => 'mary had a little lamb')"
+        @ae_method.update_attributes(:data => method)
+        notification = invoke_ae.root(@ae_result_key)
+        expect(notification.options[:message]).to eql("mary had a little lamb")
+        expect(notification).to have_attributes(
+          :notification_type_id => NotificationType.find_by_name(:automate_user_info).id,
+          :subject_id    => @owner.id
+        )
+      end
+
+      it "type automate_user_warning" do
+        method = "$evm.root['#{@ae_result_key}'] = $evm.create_notification(:level => 'warning', :message => 'test for automate user warning')"
+        @ae_method.update_attributes(:data => method)
+        notification = invoke_ae.root(@ae_result_key)
+        expect(notification.options[:message]).to eql("test for automate user warning")
+        expect(notification).to have_attributes(
+          :notification_type_id => NotificationType.find_by_name(:automate_user_warning).id,
+          :subject_id    => @owner.id
+        )
+      end
+
+      it "type automate_user_success" do
+        method = "$evm.root['#{@ae_result_key}'] = $evm.create_notification(:level => 'success', :audience => 'user', :message => 'test for automate user success')"
+        @ae_method.update_attributes(:data => method)
+        notification = invoke_ae.root(@ae_result_key)
+        expect(notification.options[:message]).to eql("test for automate user success")
+        expect(notification).to have_attributes(
+          :notification_type_id => NotificationType.find_by_name(:automate_user_success).id,
+          :subject_id    => @owner.id
+        )
+      end
+    end
+
     context "$evm.instance_exists?" do
       it "nonexistant instance " do
         method   = "$evm.root['#{@ae_result_key}'] = $evm.instance_exists?('/bogus/evenworse/fred')"

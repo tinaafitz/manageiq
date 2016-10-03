@@ -237,6 +237,42 @@ module MiqAeMethodService
       raise MiqAeException::MethodNotFound, err.message
     end
 
+    def notification_subject(values_hash)
+      if values_hash[:subject].present?
+        subject = values_hash[:subject]
+        subject = subject.instance_variable_get('@object') if values_hash[:subject].kind_of?(MiqAeMethodService::MiqAeServiceModelBase)
+        raise ArgumentError, "Subject must be a valid Active Record object" if !subject.kind_of?(ActiveRecord::Base)
+      else
+        subject = @workspace.ae_user
+      end
+      subject
+    end
+
+    def notification_type(values_hash)
+      if values_hash[:type].present? && !values_hash[:type].nil?
+        type = values_hash[:type]
+      else
+        level = values_hash[:level] || "info"
+        audience = values_hash[:audience] || "user"
+        _log.info("Generic notification type level: #{level} audience: #{audience}")
+        type = "automate_#{audience}_#{level}".downcase.to_sym
+      end
+      _log.info("Validating Notification type: #{type}")
+      valid_type = NotificationType.find_by_name(type.to_sym)
+      raise ArgumentError, "Invalid notification type specified" if !valid_type
+      type
+    end
+
+    def create_notification(values_hash = {})
+      options = {}
+      type = notification_type(values_hash)
+      subject = notification_subject(values_hash)
+      options[:message] = values_hash[:message] if values_hash[:message].present?
+
+      _log.info("Calling Create Notification with type: #{type} subject: #{subject} options: #{options.inspect}")
+      Notification.create!(:type => type, :subject => subject, :options => options, :initiator => @workspace.ae_user)
+    end
+
     def instance_exists?(path)
       _log.info "<< path=#{path.inspect}"
       __find_instance_from_path(path) ? true : false
